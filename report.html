@@ -13866,6 +13866,22 @@ The F1 score is: 1.0
 <p><img src="images/sample_cnn.png" alt="Sample CNN"></p>
 <p><strong>Question 4:</strong> Outline the steps you took to get to your final CNN architecture and your reasoning at each step.  If you chose to use the hinted architecture above, describe why you think that CNN architecture should work well for the image classification task.</p>
 <p><strong>Answer:</strong></p>
+<p>I have implemented the architecture suggested above, it trains relatively fast and attains &gt;1% test accuracy in just 5 epochs.</p>
+<p>It is an 8 Layer CNN network, with 3 Convolutional Layers.</p>
+<p>While the first and second Convolutional layers identify simpler feature, the third layer starts to identify more complex features like eyes, mouths and ears which are key features in identifying dogs' breeds. However while the network is able to classify some dog images correctly the accuracy is still low at 2.7% after 10 epochs.</p>
+<p>The addition of more layers and a higher number of epochs will certainly increase its accuracy but it will also significantly increase its traning time.</p>
+<p>A much deeper network and and much greater number of training sample would be needed to reach an accuracy comparable to those reached by building a CNN network that uses transfer learning from a pre-trained network like Resnet50. Further down the notebook I will be using transfer learning and train only the last layer of a Neural Network which attains 81% accuracy.</p>
+<p>The current CNN network is composed by the following layers:</p>
+<ul>
+<li><strong>Layer 1:</strong> This model starts with a Convolutional Layer with 16 filters, a kernel size of 2x2 with a stride of 1x1. These parameters retain virtually the same <em>weight</em> and <em>height</em> (not exactly same because of the 'valid' padding) but increases the depth of the tensor of 5 folds. This layer is analysing the original image pixels and <strong>extracting simple features like lines and edges</strong> and  a 16 dimension deep output tensor. This layer uses the Relu activation which uses the function max(0,x). This is computationally more efficient than tanh and sigmoid and does not suffer from vanishing gradient problems. </li>
+<li><strong>Layer 2:</strong> The next layer is  Max Pooling Layer which reduces the <em>weight</em> and <em>height</em> dimensions of the tensor by applying the max(a..n) function to a cluster of adjacent neuron (in this case a square of 2x2). This is a form of down-sampling used to <strong>identify the most important features while reducing the computational cost</strong> by reducing the number of parameters required to learn.</li>
+<li><strong>Layer 3:</strong> Another Convolutional Layer, same kernel size of 2x2 and stride of 1 retain virtually the same <em>width</em> and <em>height</em> but the number of filters is increased to 32. Here I'm expecting the Layer to start <strong>extracting  more complex features like curves, and simple patterns like fur</strong></li>
+<li><strong>Layer 4:</strong> Another Max Pooling Layer, the <em>weight</em> and <em>height</em> dimensions are halved retaining the most important features. </li>
+<li><strong>Layer 5:</strong> Another Convolutional Layer, as before it retains the <em>width</em> and <em>height</em> of the tensor but it double the depth to 64. I'm expecting this layer to be able to <strong>identify features like eyes, mouths, ears</strong> etc.</li>
+<li><strong>Layer 6:</strong> A final Max Pooling Layer, halving the <em>width</em> and <em>height</em> while retaining the most important features.</li>
+<li><strong>Layer 7:</strong> A Global Average Pooling layer, we are squashing the <em>width</em> and <em>height</em> dimensions to the average value, we retain the depth of 64.</li>
+<li><strong>Layer 8:</strong> The output layer is a fully connected Dense layer with the output matching the 133 dog breeds we want to predict. This layer uses 'softmax' as the activation function since we want the output to be the probability of each dog breed.</li>
+</ul>
 
 </div>
 </div>
@@ -14914,6 +14930,14 @@ Epoch 20/20
 <h3 id="(IMPLEMENTATION)-Test-Your-Algorithm-on-Sample-Images!">(IMPLEMENTATION) Test Your Algorithm on Sample Images!<a class="anchor-link" href="#(IMPLEMENTATION)-Test-Your-Algorithm-on-Sample-Images!">&#182;</a></h3><p>Test your algorithm at least six images on your computer.  Feel free to use any images you like.  Use at least two human and two dog images.</p>
 <p><strong>Question 6:</strong> Is the output better than you expected :) ?  Or worse :( ?  Provide at least three possible points of improvement for your algorithm.</p>
 <p><strong>Answer:</strong></p>
+<p>The output is better than I expected, for example it was able to identify the lineage of a mixed breed dog with 70% Ibizan Hound lineage. Also I felt the breed given to human certainly had caught some hard to explain similarities.</p>
+<p>In few occasions however, the algorithm did not identify a person and returned the error message saying that no dog nor human were found despite the photo were that of a person.</p>
+<p><strong>Improvements:</strong></p>
+<ol>
+<li>I would try a different face detection algorithms like the SSD MobileNet V1.</li>
+<li>If a human is detected, I would detect the bounding box of the face, add some small margin, and submit to the breed classifier only this portion of the image so to focus on the face of the person.</li>
+<li>I would augment the training set images (e.g. rotating them of 20-30 degrees, flipping them, zooming them etc) to improve the dog breed classification.</li>
+</ol>
 
 </div>
 </div>
@@ -14928,19 +14952,6 @@ Epoch 20/20
 <span class="c1">## Feel free to use as many code cells as needed.</span>
 
 <span class="n">humandog_detector</span> <span class="o">=</span> <span class="n">HumanAndDogDetector</span><span class="p">(</span><span class="n">dog_detector</span><span class="p">,</span> <span class="n">face_detector</span><span class="p">,</span> <span class="n">dog_breed_predictor_resnet50</span><span class="p">)</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span> 
 </pre></div>
 
     </div>
